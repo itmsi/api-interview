@@ -36,27 +36,62 @@ const validateListEmployees = [
     .trim(),
   query('employee_email')
     .optional()
-    .isEmail()
-    .withMessage('Invalid email format')
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          throw new Error('Invalid email format');
+        }
+      }
+      return true;
+    })
     .isLength({ max: 100 })
     .withMessage('Employee email filter must not exceed 100 characters')
     .trim(),
   query('title_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid title ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid title ID format');
+        }
+      }
+      return true;
+    }),
   query('department_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid department ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid department ID format');
+        }
+      }
+      return true;
+    }),
   query('gender_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid gender ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid gender ID format');
+        }
+      }
+      return true;
+    }),
   query('island_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid island ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid island ID format');
+        }
+      }
+      return true;
+    }),
   query('employee_activation_status')
     .optional()
     .isLength({ max: 50 })
@@ -97,27 +132,62 @@ const validateListEmployeesPost = [
     .trim(),
   body('employee_email')
     .optional()
-    .isEmail()
-    .withMessage('Invalid email format')
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          throw new Error('Invalid email format');
+        }
+      }
+      return true;
+    })
     .isLength({ max: 100 })
     .withMessage('Employee email filter must not exceed 100 characters')
     .trim(),
   body('title_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid title ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid title ID format');
+        }
+      }
+      return true;
+    }),
   body('department_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid department ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid department ID format');
+        }
+      }
+      return true;
+    }),
   body('gender_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid gender ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid gender ID format');
+        }
+      }
+      return true;
+    }),
   body('island_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid island ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid island ID format');
+        }
+      }
+      return true;
+    }),
   body('employee_activation_status')
     .optional()
     .isLength({ max: 50 })

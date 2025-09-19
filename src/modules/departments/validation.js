@@ -41,8 +41,15 @@ const validateListDepartments = [
     .trim(),
   query('company_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid company ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid company ID format');
+        }
+      }
+      return true;
+    }),
 ];
 
 const validateListDepartmentsPost = [
@@ -79,8 +86,15 @@ const validateListDepartmentsPost = [
     .trim(),
   body('company_id')
     .optional()
-    .isUUID()
-    .withMessage('Invalid company ID format'),
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(value)) {
+          throw new Error('Invalid company ID format');
+        }
+      }
+      return true;
+    }),
 ];
 
 const handleValidationErrors = (req, res, next) => {

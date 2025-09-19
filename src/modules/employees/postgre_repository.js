@@ -60,9 +60,17 @@ class EmployeesRepository {
       )
       .where('employees.is_delete', false);
 
-    // Query untuk count total records
-    const countQuery = buildCountQuery(baseQuery, queryParams);
-    const [{ total }] = await countQuery;
+    // Query untuk count total records - buat query terpisah tanpa select
+    const countBaseQuery = db('employees')
+      .leftJoin('titles', 'employees.title_id', 'titles.title_id')
+      .leftJoin('departments', 'employees.department_id', 'departments.department_id')
+      .leftJoin('companies', 'departments.company_id', 'companies.company_id')
+      .leftJoin('genders', 'employees.gender_id', 'genders.gender_id')
+      .leftJoin('islands', 'employees.island_id', 'islands.island_id')
+      .where('employees.is_delete', false);
+    const countQuery = buildCountQuery(countBaseQuery, queryParams);
+    const [{ count }] = await countQuery.count('employees.employee_id as count');
+    const total = parseInt(count);
 
     // Apply filters dan pagination ke base query
     const dataQuery = applyStandardFilters(baseQuery.clone(), queryParams);

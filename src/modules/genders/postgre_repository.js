@@ -26,9 +26,12 @@ class GendersRepository {
       .select('*')
       .where('is_delete', false);
 
-    // Query untuk count total records
-    const countQuery = buildCountQuery(baseQuery, queryParams);
-    const [{ total }] = await countQuery;
+    // Query untuk count total records - buat query terpisah tanpa select *
+    const countBaseQuery = db('genders')
+      .where('is_delete', false);
+    const countQuery = buildCountQuery(countBaseQuery, queryParams);
+    const [{ count }] = await countQuery.count('gender_id as count');
+    const total = parseInt(count);
 
     // Apply filters dan pagination ke base query
     const dataQuery = applyStandardFilters(baseQuery.clone(), queryParams);

@@ -36,8 +36,15 @@ const validateListCompanies = [
     .trim(),
   query('company_email')
     .optional()
-    .isEmail()
-    .withMessage('Invalid email format')
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          throw new Error('Invalid email format');
+        }
+      }
+      return true;
+    })
     .isLength({ max: 100 })
     .withMessage('Company email filter must not exceed 100 characters')
     .trim(),
@@ -72,8 +79,15 @@ const validateListCompaniesPost = [
     .trim(),
   body('company_email')
     .optional()
-    .isEmail()
-    .withMessage('Invalid email format')
+    .custom((value) => {
+      if (value && value.trim() !== '') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          throw new Error('Invalid email format');
+        }
+      }
+      return true;
+    })
     .isLength({ max: 100 })
     .withMessage('Company email filter must not exceed 100 characters')
     .trim(),

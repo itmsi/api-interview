@@ -48,9 +48,14 @@ class TitlesRepository {
       )
       .where('titles.is_delete', false);
 
-    // Query untuk count total records
-    const countQuery = buildCountQuery(baseQuery, queryParams);
-    const [{ total }] = await countQuery;
+    // Query untuk count total records - buat query terpisah tanpa select
+    const countBaseQuery = db('titles')
+      .leftJoin('departments', 'titles.department_id', 'departments.department_id')
+      .leftJoin('companies', 'departments.company_id', 'companies.company_id')
+      .where('titles.is_delete', false);
+    const countQuery = buildCountQuery(countBaseQuery, queryParams);
+    const [{ count }] = await countQuery.count('titles.title_id as count');
+    const total = parseInt(count);
 
     // Apply filters dan pagination ke base query
     const dataQuery = applyStandardFilters(baseQuery.clone(), queryParams);
