@@ -18,6 +18,12 @@ const sendAlert = async (rows) => {
     template = 'mail/url'
     subject = `Alert Exception ${process.env.APP_NAME} || ${process.env.NODE_ENV} ${process.env.APP_ENV}`
   }
+  // Check if MAIL_ALERT_LIST is defined before sending email
+  if (!process.env.MAIL_ALERT_LIST) {
+    console.warn('MAIL_ALERT_LIST not configured, skipping email alert')
+    return { status: 'skipped', message: 'MAIL_ALERT_LIST not configured' }
+  }
+
   const status = await mail.init()
     .to(process.env.MAIL_ALERT_LIST.split(','))
     .subject(subject)
@@ -33,33 +39,6 @@ const sendAlertSlack = async (rows) => {
     ...APP_INFO
   };
   return 'captured-not-sent-to-slack';//sementara di hide dulu
-  try {
-    if (process.env.SLACK_CAPTURE === 'on') {
-      const text = `*Alert Exception*\n${process.env.APP_NAME}\n*Environment*\n${
-        process.env.NODE_ENV
-      }\n*Message*\n${data?.messages}\n*Errors*\n${
-        data?.exceptions
-      }\n*Exceptions*\n${JSON.stringify(data?.errors)}\n*Path*\n${
-        data?.path_error
-      }`;
-      await axios({
-        method: 'POST',
-        url: `${process.env.SLACK_API}/chat.postMessage`,
-        data: { text, channel: `#${process.env.SLACK_CHANNEL}` },
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          accept: 'json',
-          Authorization: `Bearer ${process.env.SLACK_KEY}`
-        }
-      });
-      return 'captured';
-    }
-    console.log('not sending to slack')
-    return 'captured-not-sent-to-slack';
-  } catch (errs) {
-    console.info(errs);
-    return 'not-captured';
-  }
 };
 
 module.exports = {

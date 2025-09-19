@@ -14,6 +14,7 @@ const pdf = require('./pdf')
 const publish = require('./publish')
 const excel = require('./excel')
 const standardQuery = require('./standard_query')
+const databaseQueue = require('./database_queue')
 
 module.exports = {
   ...constant,
@@ -31,5 +32,6 @@ module.exports = {
   ...pdf,
   ...publish,
   ...excel,
-  ...standardQuery
+  ...standardQuery,
+  ...databaseQueue
 }
