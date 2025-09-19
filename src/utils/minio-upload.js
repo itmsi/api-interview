@@ -178,12 +178,11 @@ const generateMinioUploadUpdated = async (req, file, row, defaults = '', additio
 
     if (uploadResult.success) {
       logger(filePath, 'upload').write(`Success uploading file ${fileName} to MinIO bucket ${bucketName} ${logDateFormat()}\n`);
-      row.payload[row?.payloadName] = uploadResult.url;
+      return uploadResult.url; // Return the new URL directly
     } else {
       logger(filePath, 'upload').write(`Error uploading file ${fileName} to MinIO bucket ${bucketName} ${logDateFormat()}\n`);
+      return row?.payload; // Return existing payload if upload fails
     }
-
-    return row?.payload;
   } catch (error) {
     console.error('Error MinIO Upload Put: ', error);
     return row?.payload;

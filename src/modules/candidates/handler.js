@@ -243,11 +243,12 @@ class CandidatesHandler {
 
       // Handle file uploads
       if (req.files && req.files.candidate_foto) {
+        console.log('DEBUG: Updating candidate foto...');
         const fotoUpload = await generateMinioUploadUpdated(
           req,
           { num: 'candidate_foto', name: 'candidate-photo', path: 'candidates/photos' },
           { payload: existingCandidate.candidate_foto },
-          '',
+          existingCandidate.candidate_foto || '', // Use existing foto as default
           { 
             isWatermark: false, 
             isPrivate: false, 
@@ -256,17 +257,17 @@ class CandidatesHandler {
           }
         );
         
-        if (fotoUpload) {
-          updateData.candidate_foto = fotoUpload;
-        }
+        console.log('DEBUG: Foto upload result:', fotoUpload);
+        updateData.candidate_foto = fotoUpload; // fotoUpload is now directly the URL string
       }
 
       if (req.files && req.files.candidate_resume) {
+        console.log('DEBUG: Updating candidate resume...');
         const resumeUpload = await generateMinioUploadUpdated(
           req,
           { num: 'candidate_resume', name: 'candidate-resume', path: 'candidates/resumes' },
           { payload: existingCandidate.candidate_resume },
-          '',
+          existingCandidate.candidate_resume || '', // Use existing resume as default
           { 
             isWatermark: false, 
             isPrivate: false, 
@@ -274,9 +275,8 @@ class CandidatesHandler {
           }
         );
         
-        if (resumeUpload) {
-          updateData.candidate_resume = resumeUpload;
-        }
+        console.log('DEBUG: Resume upload result:', resumeUpload);
+        updateData.candidate_resume = resumeUpload; // resumeUpload is now directly the URL string
       }
 
       const candidate = await CandidatesRepository.update(id, updateData);
