@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
 
-// File filter function
+// File filter function for PowerBI reports
 const fileFilter = (req, file, cb) => {
   // Allow specific file types for PowerBI reports
   const allowedTypes = [
@@ -32,7 +32,62 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer
+// File filter function for candidates (photos and resumes)
+const candidateFileFilter = (req, file, cb) => {
+  // Allow specific file types for candidate uploads
+  const allowedTypes = [
+    // Images
+    'image/jpeg',
+    'image/jpg', 
+    'image/png',
+    'image/gif',
+    'image/webp',
+    // Documents
+    'application/pdf',
+    'application/msword', // .doc
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'text/plain' // .txt
+  ];
+
+  // Check file extension as fallback
+  const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx', '.txt'];
+  const fileExtension = path.extname(file.originalname).toLowerCase();
+
+  // Different validation based on field name
+  if (file.fieldname === 'candidate_foto') {
+    const imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    
+    if (imageTypes.includes(file.mimetype) || imageExtensions.includes(fileExtension)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Photo file type not allowed. Allowed types: ${imageExtensions.join(', ')}`), false);
+    }
+  } else if (file.fieldname === 'candidate_resume') {
+    const documentTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain'
+    ];
+    const documentExtensions = ['.pdf', '.doc', '.docx', '.txt'];
+    
+    if (documentTypes.includes(file.mimetype) || documentExtensions.includes(fileExtension)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Resume file type not allowed. Allowed types: ${documentExtensions.join(', ')}`), false);
+    }
+  } else {
+    // For other files, use general validation
+    if (allowedTypes.includes(file.mimetype) || allowedExtensions.includes(fileExtension)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`File type not allowed. Allowed types: ${allowedExtensions.join(', ')}`), false);
+    }
+  }
+};
+
+// Configure multer for PowerBI
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
@@ -42,10 +97,26 @@ const upload = multer({
   }
 });
 
-// Middleware for single file upload
+// Configure multer for candidates with multiple files
+const candidateUpload = multer({
+  storage: storage,
+  fileFilter: candidateFileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit per file
+    files: 2 // Allow up to 2 files (photo and resume)
+  }
+});
+
+// Middleware for single file upload (PowerBI)
 const uploadSingleFile = upload.single('file');
 
-// Middleware wrapper to handle multer errors
+// Middleware for candidate files upload
+const uploadCandidateFiles = candidateUpload.fields([
+  { name: 'candidate_foto', maxCount: 1 },
+  { name: 'candidate_resume', maxCount: 1 }
+]);
+
+// Middleware wrapper to handle multer errors for single file (PowerBI)
 const handleFileUpload = (req, res, next) => {
   uploadSingleFile(req, res, (err) => {
     if (err instanceof multer.MulterError) {
@@ -75,6 +146,51 @@ const handleFileUpload = (req, res, next) => {
         error: err.message
       });
     }
+    console.log('DEBUG: Files processed successfully in handleFileUpload, req.file:', req.file);
+    next();
+  });
+};
+
+// Middleware wrapper to handle multer errors for candidate files
+const handleCandidateFileUpload = (req, res, next) => {
+  console.log('DEBUG: handleCandidateFileUpload called');
+  console.log('DEBUG: req.body before upload:', req.body);
+  uploadCandidateFiles(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          success: false,
+          message: 'File too large. Maximum size is 10MB per file.',
+          error: err.message
+        });
+      }
+      if (err.code === 'LIMIT_FILE_COUNT') {
+        return res.status(400).json({
+          success: false,
+          message: 'Too many files. Maximum 2 files allowed (photo and resume).',
+          error: err.message
+        });
+      }
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return res.status(400).json({
+          success: false,
+          message: 'Unexpected file field. Only candidate_foto and candidate_resume are allowed.',
+          error: err.message
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'File upload error',
+        error: err.message
+      });
+    } else if (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'File validation error',
+        error: err.message
+      });
+    }
+    console.log('DEBUG: Files processed successfully in handleCandidateFileUpload, req.files:', req.files);
     next();
   });
 };
@@ -111,6 +227,7 @@ const getContentType = (filename) => {
 
 module.exports = {
   handleFileUpload,
+  handleCandidateFileUpload,
   generateFileName,
   getContentType
 };

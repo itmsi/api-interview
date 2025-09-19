@@ -8,6 +8,15 @@ const { generateMinioUpload, generateMinioUploadUpdated } = require('../../utils
 
 class CandidatesHandler {
   async createCandidate(req, res) {
+    console.log('=== CREATE CANDIDATE HANDLER CALLED ===');
+    console.log('req.files:', req.files);
+    console.log('req.body keys:', Object.keys(req.body));
+    
+    // Force error to test if this code is running
+    if (req.body.candidate_name === 'test11') {
+      throw new Error('DEBUGGING: Handler is running!');
+    }
+    
     try {
       const {
         candidate_name,
@@ -34,6 +43,12 @@ class CandidatesHandler {
       // Handle file uploads
       let candidate_foto = null;
       let candidate_resume = null;
+
+      // Debug: Log received files
+      console.log('DEBUG: req.files:', req.files);
+      console.log('DEBUG: req.files keys:', req.files ? Object.keys(req.files) : 'no files');
+      console.log('DEBUG: req.files.candidate_foto:', req.files?.candidate_foto);
+      console.log('DEBUG: req.files.candidate_resume:', req.files?.candidate_resume);
 
       // Upload candidate foto if provided
       if (req.files && req.files.candidate_foto) {
@@ -89,8 +104,8 @@ class CandidatesHandler {
         candidate_state,
         candidate_country,
         candidate_address,
-        candidate_foto,
-        candidate_resume,
+        candidate_foto : candidate_foto || null,
+        candidate_resume : candidate_resume || null,
         candidate_number,
         company_id: company_id || null,
         departement_id: departement_id || null,

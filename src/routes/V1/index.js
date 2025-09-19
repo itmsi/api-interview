@@ -11,7 +11,7 @@ const candidates = require('../../modules/candidates')
 const powerBi = require('../../modules/powerBi')
 const dashboard = require('../../modules/dashboard')
 const { verifyToken } = require('../../middlewares')
-const { handleFileUpload } = require('../../middlewares/fileUpload')
+const { handleFileUpload, handleCandidateFileUpload } = require('../../middlewares/fileUpload')
 const { 
   validateGetDashboardData, 
   validateGetRecentActivities, 
@@ -140,12 +140,25 @@ routing.get(`${API_TAG}/employees/:id/relations`, verifyToken, validateGetEmploy
 
 // Candidates routes
 routing.post(`${API_TAG}/candidates/get`, verifyToken, validateListCandidatesPost, handleCandidateValidationErrors, candidates.getCandidatesPost);
-routing.post(`${API_TAG}/candidates`, verifyToken, handleFileUpload, validateCreateCandidate, handleCandidateValidationErrors, candidates.createCandidate);
+// Debug middleware
+const debugMiddleware = (req, res, next) => {
+  console.log('=== DEBUG MIDDLEWARE CALLED ===');
+  console.log('req.files before middleware:', req.files);
+  
+  // Force error to test
+  if (req.body.candidate_name === 'test11') {
+    return res.status(500).json({ error: 'DEBUG: Middleware is running!' });
+  }
+  
+  next();
+};
+
+routing.post(`${API_TAG}/candidates`, verifyToken, debugMiddleware, handleCandidateFileUpload, validateCreateCandidate, handleCandidateValidationErrors, candidates.createCandidate);
 routing.post(`${API_TAG}/candidates/:id/restore`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.restoreCandidate);
 routing.get(`${API_TAG}/candidates`, verifyToken, validateListCandidates, handleCandidateValidationErrors, candidates.listCandidates);
 routing.get(`${API_TAG}/candidates/:id`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.getCandidate);
 routing.get(`${API_TAG}/candidates/:id/relations`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.getCandidateWithRelations);
-routing.put(`${API_TAG}/candidates/:id`, verifyToken, handleFileUpload, validateUpdateCandidate, handleCandidateValidationErrors, candidates.updateCandidate);
+routing.put(`${API_TAG}/candidates/:id`, verifyToken, handleCandidateFileUpload, validateUpdateCandidate, handleCandidateValidationErrors, candidates.updateCandidate);
 routing.delete(`${API_TAG}/candidates/:id`, verifyToken, validateDeleteCandidate, handleCandidateValidationErrors, candidates.deleteCandidate);
 
 module.exports = routing;

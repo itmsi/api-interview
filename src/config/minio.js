@@ -75,11 +75,18 @@ const uploadToMinio = async (objectName, buffer, contentType = 'application/octe
       console.warn(`Could not set bucket policy for '${bucket}':`, policyError.message);
     }
 
-    // Upload the file with public-read ACL
-    await minioClient.putObject(bucket, objectName, buffer, {
+    // Upload the file
+    if (!buffer || !Buffer.isBuffer(buffer)) {
+      console.error('Invalid buffer provided to uploadToMinio:', typeof buffer);
+      return {
+        success: false,
+        error: 'Invalid buffer provided',
+        url: ''
+      };
+    }
+    
+    await minioClient.putObject(bucket, objectName, buffer, buffer.length, {
       'Content-Type': contentType
-    }, {
-      'x-amz-acl': 'public-read'
     });
 
     // Generate public URL
@@ -121,7 +128,7 @@ const uploadToMinioPrivate = async (bucketName, objectName, buffer, contentType 
     }
 
     // Upload the file
-    await minioClientPrivate.putObject(bucketName, objectName, buffer, {
+    await minioClientPrivate.putObject(bucketName, objectName, buffer, buffer.length, {
       'Content-Type': contentType
     });
 

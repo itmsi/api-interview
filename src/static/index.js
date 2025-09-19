@@ -1,7 +1,7 @@
 const info = {
-  description: 'Report Management SSO Client API - Made with ❤ by <a href="https://github.com/abdulfalaq5" target="_blank">@abdulfalaq5.</a>',
+  description: 'Interview Management API - Made with ❤ by <a href="https://github.com/abdulfalaq5" target="_blank">@abdulfalaq5.</a>',
   version: '1.0.0',
-  title: 'Report Management SSO Client API Documentation',
+  title: 'Interview Management API Documentation',
   contact: {
     email: ''
   },

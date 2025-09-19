@@ -27,11 +27,28 @@ const generateMinioUpload = async (req, num, paths, naming, defaults = '', addit
       };
     }
 
-    let { buffer } = req.files[num];
-    const mime = req?.files[num]?.mimetype;
-    let fileNames = req?.files[num]?.fieldname
-      ? `${naming !== '' ? `${naming}-` : ''}${Date.now()}${path.extname(req?.files[num]?.originalname)}`
+    // Debug logging
+    console.log('DEBUG generateMinioUpload - req.files[num]:', req.files[num]);
+    console.log('DEBUG generateMinioUpload - num:', num);
+    
+    // Handle both single file and array structure from multer
+    const fileData = Array.isArray(req.files[num]) ? req.files[num][0] : req.files[num];
+    
+    let buffer = fileData?.buffer;
+    const mime = fileData?.mimetype;
+    let fileNames = fileData?.fieldname
+      ? `${naming !== '' ? `${naming}-` : ''}${Date.now()}${path.extname(fileData?.originalname)}`
       : defaults;
+    
+    // Check if buffer exists
+    if (!buffer) {
+      console.error('Buffer is undefined for file:', num);
+      return {
+        pathForDatabase: defaults,
+        fileNames: defaults,
+        status: false
+      };
+    }
 
     let watermarkImage;
     if (additional.isWatermark) {
@@ -43,12 +60,19 @@ const generateMinioUpload = async (req, num, paths, naming, defaults = '', addit
 
     const bucketName = additional.isPrivate
       ? process.env.MINIO_BUCKET_PRIVATE || process.env.AWS_BUCKET_PRIVATE
-      : process.env.MINIO_BUCKET || process.env.AWS_BUCKET;
+      : process.env.S3_BUCKET || process.env.MINIO_BUCKET || process.env.AWS_BUCKET;
 
     const { pathForDatabase } = generateFolder(paths);
 
-    if (additional.compressImage) {
-      buffer = await resizeImage(buffer, mime, naming);
+    if (additional.compressImage && mime && mime.startsWith('image/')) {
+      try {
+        const resizedBuffer = await resizeImage(buffer, mime, naming);
+        if (resizedBuffer) {
+          buffer = resizedBuffer;
+        }
+      } catch (error) {
+        console.warn('Image compression failed, using original buffer:', error.message);
+      }
     }
 
     const objectName = `${pathForDatabase}${fileNames}`;
@@ -57,7 +81,7 @@ const generateMinioUpload = async (req, num, paths, naming, defaults = '', addit
     // Upload to MinIO
     const uploadResult = additional.isPrivate
       ? await uploadToMinioPrivate(bucketName, objectName, buffer, contentType)
-      : await uploadToMinio(bucketName, objectName, buffer, contentType);
+      : await uploadToMinio(objectName, buffer, contentType, bucketName);
 
     // Remove temporary watermarked image
     if (additional.isWatermark && watermarkImage) {
@@ -100,17 +124,21 @@ const generateMinioUploadUpdated = async (req, file, row, defaults = '', additio
     }
 
     const filePath = `user-upload-minio-put-${logDateFormat()}.txt`;
-    let fileName = req?.files[file?.num]?.fieldname
-      ? `${file?.name !== '' ? `${file?.name}-` : ''}${Date.now()}${path.extname(req?.files[file?.num]?.originalname)}`
+    
+    // Handle both single file and array structure from multer
+    const fileData = Array.isArray(req.files[file?.num]) ? req.files[file?.num][0] : req.files[file?.num];
+    
+    let fileName = fileData?.fieldname
+      ? `${file?.name !== '' ? `${file?.name}-` : ''}${Date.now()}${path.extname(fileData?.originalname)}`
       : defaults;
 
     const bucketName = additional.isPrivate
       ? process.env.MINIO_BUCKET_PRIVATE || process.env.AWS_BUCKET_PRIVATE
-      : process.env.MINIO_BUCKET || process.env.AWS_BUCKET;
+      : process.env.S3_BUCKET || process.env.MINIO_BUCKET || process.env.AWS_BUCKET;
 
     const { pathForDatabase } = generateFolder(file?.path);
-    let { buffer } = req.files[file?.num];
-    const mime = req?.files[file?.num]?.mimetype;
+    let buffer = fileData?.buffer;
+    const mime = fileData?.mimetype;
 
     let watermarkImage;
     if (additional.isWatermark) {
@@ -120,8 +148,15 @@ const generateMinioUploadUpdated = async (req, file, row, defaults = '', additio
       fileName = additional.fileNames ? `watermark-${additional.fileNames}` : `watermark-${fileName}`;
     }
 
-    if (additional.compressImage) {
-      buffer = await resizeImage(buffer, mime, fileName);
+    if (additional.compressImage && mime && mime.startsWith('image/')) {
+      try {
+        const resizedBuffer = await resizeImage(buffer, mime, fileName);
+        if (resizedBuffer) {
+          buffer = resizedBuffer;
+        }
+      } catch (error) {
+        console.warn('Image compression failed, using original buffer:', error.message);
+      }
     }
 
     const objectName = `${pathForDatabase}${fileName}`;
@@ -130,7 +165,7 @@ const generateMinioUploadUpdated = async (req, file, row, defaults = '', additio
     // Upload to MinIO
     const uploadResult = additional.isPrivate
       ? await uploadToMinioPrivate(bucketName, objectName, buffer, contentType)
-      : await uploadToMinio(bucketName, objectName, buffer, contentType);
+      : await uploadToMinio(objectName, buffer, contentType, bucketName);
 
     // Remove temporary watermarked image
     if (additional.isWatermark && watermarkImage) {
