@@ -7,6 +7,7 @@ const titles = require('../../modules/titles')
 const islands = require('../../modules/islands')
 const genders = require('../../modules/genders')
 const employees = require('../../modules/employees')
+const candidates = require('../../modules/candidates')
 const powerBi = require('../../modules/powerBi')
 const dashboard = require('../../modules/dashboard')
 const { verifyToken } = require('../../middlewares')
@@ -55,6 +56,15 @@ const {
   validateListEmployeesPost, 
   handleValidationErrors: handleEmployeeValidationErrors 
 } = require('../../modules/employees/validation')
+const { 
+  validateCreateCandidate, 
+  validateUpdateCandidate, 
+  validateGetCandidate, 
+  validateDeleteCandidate, 
+  validateListCandidates, 
+  validateListCandidatesPost, 
+  handleValidationErrors: handleCandidateValidationErrors 
+} = require('../../modules/candidates/validation')
 
 const routing = express();
 const API_TAG = '/api';
@@ -127,5 +137,15 @@ routing.post(`${API_TAG}/employees/get`, verifyToken, validateListEmployeesPost,
 routing.get(`${API_TAG}/employees`, verifyToken, validateListEmployees, handleEmployeeValidationErrors, employees.listEmployees);
 routing.get(`${API_TAG}/employees/:id`, verifyToken, validateGetEmployee, handleEmployeeValidationErrors, employees.getEmployee);
 routing.get(`${API_TAG}/employees/:id/relations`, verifyToken, validateGetEmployee, handleEmployeeValidationErrors, employees.getEmployeeWithRelations);
+
+// Candidates routes
+routing.post(`${API_TAG}/candidates/get`, verifyToken, validateListCandidatesPost, handleCandidateValidationErrors, candidates.getCandidatesPost);
+routing.post(`${API_TAG}/candidates`, verifyToken, handleFileUpload, validateCreateCandidate, handleCandidateValidationErrors, candidates.createCandidate);
+routing.post(`${API_TAG}/candidates/:id/restore`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.restoreCandidate);
+routing.get(`${API_TAG}/candidates`, verifyToken, validateListCandidates, handleCandidateValidationErrors, candidates.listCandidates);
+routing.get(`${API_TAG}/candidates/:id`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.getCandidate);
+routing.get(`${API_TAG}/candidates/:id/relations`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.getCandidateWithRelations);
+routing.put(`${API_TAG}/candidates/:id`, verifyToken, handleFileUpload, validateUpdateCandidate, handleCandidateValidationErrors, candidates.updateCandidate);
+routing.delete(`${API_TAG}/candidates/:id`, verifyToken, validateDeleteCandidate, handleCandidateValidationErrors, candidates.deleteCandidate);
 
 module.exports = routing;

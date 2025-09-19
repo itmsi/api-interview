@@ -23,47 +23,43 @@ const servers = [
 ]
 
 // Import schemas
-const categoriesSchema = require('./schema/categories');
 const companiesSchema = require('./schema/companies');
 const departmentsSchema = require('./schema/departments');
 const titlesSchema = require('./schema/titles');
 const islandsSchema = require('./schema/islands');
 const gendersSchema = require('./schema/genders');
 const employeesSchema = require('./schema/employees');
-// const powerBiSchema = require('./schema/powerBi');
-// const dashboardSchema = require('./schema/dashboard');
+const candidatesSchema = require('./schema/candidates');
 
 // Import paths
-const categoriesPaths = require('./path/categories');
 const companiesPaths = require('./path/companies');
 const departmentsPaths = require('./path/departments');
 const titlesPaths = require('./path/titles');
 const islandsPaths = require('./path/islands');
 const gendersPaths = require('./path/genders');
 const employeesPaths = require('./path/employees');
-// const powerBiPaths = require('./path/powerBi');
-// const dashboardPaths = require('./path/dashboard');
+const candidatesPaths = require('./path/candidates');
 
 // Combine all schemas
 const schemas = {
-  ...categoriesSchema,
   ...companiesSchema,
   ...departmentsSchema,
   ...titlesSchema,
   ...islandsSchema,
   ...gendersSchema,
-  ...employeesSchema
+  ...employeesSchema,
+  ...candidatesSchema
 };
 
 // Combine all paths
 const paths = {
-  ...categoriesPaths,
   ...companiesPaths,
   ...departmentsPaths,
   ...titlesPaths,
   ...islandsPaths,
   ...gendersPaths,
-  ...employeesPaths
+  ...employeesPaths,
+  ...candidatesPaths
 };
 
 const index = {
