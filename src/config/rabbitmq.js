@@ -5,11 +5,21 @@ const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5
 
 const connectRabbitMQ = async () => {
   try {
-    const connection = await amqp.connect(RABBITMQ_URL);
+    // Add connection timeout
+    const connection = await Promise.race([
+      amqp.connect(RABBITMQ_URL),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('RabbitMQ connection timeout after 10 seconds')), 10000)
+      )
+    ]);
+    
     const channel = await connection.createChannel();
+    console.log('✅ RabbitMQ connected successfully to:', RABBITMQ_URL);
     return { connection, channel };
   } catch (error) {
     console.error('Error connecting to RabbitMQ:', error);
+    console.error('RabbitMQ URL:', RABBITMQ_URL);
+    console.error('Consider checking RabbitMQ service status or disabling RabbitMQ if not critical');
     throw error;
   }
 };

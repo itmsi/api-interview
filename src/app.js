@@ -22,7 +22,14 @@ const { initListener } = require('./listeners')
 // Conditionally initialize listeners only if RabbitMQ is enabled
 if (process.env.RABBITMQ_ENABLED === 'true' && process.env.RABBITMQ_URL && process.env.RABBITMQ_URL !== 'disabled') {
   console.log('Initializing RabbitMQ listeners...')
-  initListener()
+  console.log('RabbitMQ URL:', process.env.RABBITMQ_URL)
+  
+  // Initialize listeners with error handling
+  initListener().catch(error => {
+    console.error('Failed to initialize RabbitMQ listeners:', error.message)
+    console.error('Application will continue without RabbitMQ functionality')
+    console.error('To disable RabbitMQ, set RABBITMQ_ENABLED=false in your environment')
+  })
 } else {
   console.log('RabbitMQ not enabled or configured, skipping listener initialization')
 }
