@@ -87,6 +87,36 @@ const candidateFileFilter = (req, file, cb) => {
   }
 };
 
+// File filter function for background check attachments
+const backgroundCheckFileFilter = (req, file, cb) => {
+  // Allow specific file types for background check attachments
+  const allowedTypes = [
+    // Images
+    'image/jpeg',
+    'image/jpg', 
+    'image/png',
+    'image/gif',
+    'image/webp',
+    // Documents
+    'application/pdf',
+    'application/msword', // .doc
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'text/plain', // .txt
+    'application/vnd.ms-excel', // .xls
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // .xlsx
+  ];
+
+  // Check file extension as fallback
+  const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx', '.txt', '.xls', '.xlsx'];
+  const fileExtension = path.extname(file.originalname).toLowerCase();
+
+  if (allowedTypes.includes(file.mimetype) || allowedExtensions.includes(fileExtension)) {
+    cb(null, true);
+  } else {
+    cb(new Error(`Background check file type not allowed. Allowed types: ${allowedExtensions.join(', ')}`), false);
+  }
+};
+
 // Configure multer for PowerBI
 const upload = multer({
   storage: storage,
@@ -107,6 +137,16 @@ const candidateUpload = multer({
   }
 });
 
+// Configure multer for background check attachments
+const backgroundCheckUpload = multer({
+  storage: storage,
+  fileFilter: backgroundCheckFileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit per file
+    files: 1 // Only one file per request
+  }
+});
+
 // Middleware for single file upload (PowerBI)
 const uploadSingleFile = upload.single('file');
 
@@ -115,6 +155,9 @@ const uploadCandidateFiles = candidateUpload.fields([
   { name: 'candidate_foto', maxCount: 1 },
   { name: 'candidate_resume', maxCount: 1 }
 ]);
+
+// Middleware for background check file upload
+const uploadBackgroundCheckFile = backgroundCheckUpload.single('file_attachment');
 
 // Middleware wrapper to handle multer errors for single file (PowerBI)
 const handleFileUpload = (req, res, next) => {
@@ -195,6 +238,43 @@ const handleCandidateFileUpload = (req, res, next) => {
   });
 };
 
+// Middleware wrapper to handle multer errors for background check files
+const handleBackgroundCheckFileUpload = (req, res, next) => {
+  console.log('DEBUG: handleBackgroundCheckFileUpload called');
+  console.log('DEBUG: req.body before upload:', req.body);
+  uploadBackgroundCheckFile(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          success: false,
+          message: 'File too large. Maximum size is 10MB.',
+          error: err.message
+        });
+      }
+      if (err.code === 'LIMIT_FILE_COUNT') {
+        return res.status(400).json({
+          success: false,
+          message: 'Too many files. Only one file is allowed.',
+          error: err.message
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'File upload error',
+        error: err.message
+      });
+    } else if (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'File validation error',
+        error: err.message
+      });
+    }
+    console.log('DEBUG: Files processed successfully in handleBackgroundCheckFileUpload, req.file:', req.file);
+    next();
+  });
+};
+
 // Generate unique filename
 const generateFileName = (originalName) => {
   const timestamp = Date.now();
@@ -228,6 +308,7 @@ const getContentType = (filename) => {
 module.exports = {
   handleFileUpload,
   handleCandidateFileUpload,
+  handleBackgroundCheckFileUpload,
   generateFileName,
   getContentType
 };

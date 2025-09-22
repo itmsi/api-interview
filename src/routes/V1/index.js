@@ -14,8 +14,9 @@ const scheduleInterview = require('../../modules/scheduleInterview')
 const interview = require('../../modules/interview')
 const powerBi = require('../../modules/powerBi')
 const dashboard = require('../../modules/dashboard')
+const backgroundCheck = require('../../modules/background_check')
 const { verifyToken } = require('../../middlewares')
-const { handleFileUpload, handleCandidateFileUpload } = require('../../middlewares/fileUpload')
+const { handleFileUpload, handleCandidateFileUpload, handleBackgroundCheckFileUpload } = require('../../middlewares/fileUpload')
 const { 
   validateGetDashboardData, 
   validateGetRecentActivities, 
@@ -105,6 +106,16 @@ const {
   validateCreateApplicantPublic,
   handleValidationErrors: handleApplicantValidationErrors 
 } = require('../../modules/applicant/validation')
+const { 
+  validateCreateBackgroundCheck, 
+  validateUpdateBackgroundCheck, 
+  validateGetBackgroundCheck, 
+  validateDeleteBackgroundCheck, 
+  validateListBackgroundChecks, 
+  validateListBackgroundChecksPost, 
+  validateGetBackgroundChecksByCandidate,
+  handleValidationErrors: handleBackgroundCheckValidationErrors 
+} = require('../../modules/background_check/validation')
 
 const routing = express();
 const API_TAG = '/api';
@@ -236,5 +247,16 @@ routing.delete(`${API_TAG}/applicants/:applicate_id`, verifyToken, validateDelet
 
 // Public Applicant routes (no authentication required)
 routing.post(`${API_TAG}/public/applicants`, validateCreateApplicantPublic, handleApplicantValidationErrors, applicant.createApplicantPublic);
+
+// Background Check routes
+routing.post(`${API_TAG}/background-checks/get`, verifyToken, validateListBackgroundChecksPost, handleBackgroundCheckValidationErrors, backgroundCheck.getBackgroundChecksPost);
+routing.post(`${API_TAG}/background-checks`, verifyToken, handleBackgroundCheckFileUpload, validateCreateBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.createBackgroundCheck);
+routing.post(`${API_TAG}/background-checks/:id/restore`, verifyToken, validateGetBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.restoreBackgroundCheck);
+routing.get(`${API_TAG}/background-checks`, verifyToken, validateListBackgroundChecks, handleBackgroundCheckValidationErrors, backgroundCheck.listBackgroundChecks);
+routing.get(`${API_TAG}/background-checks/:id`, verifyToken, validateGetBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.getBackgroundCheck);
+routing.get(`${API_TAG}/background-checks/:id/relations`, verifyToken, validateGetBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.getBackgroundCheckWithRelations);
+routing.get(`${API_TAG}/background-checks/candidate/:candidateId`, verifyToken, validateGetBackgroundChecksByCandidate, handleBackgroundCheckValidationErrors, backgroundCheck.getBackgroundChecksByCandidate);
+routing.put(`${API_TAG}/background-checks/:id`, verifyToken, handleBackgroundCheckFileUpload, validateUpdateBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.updateBackgroundCheck);
+routing.delete(`${API_TAG}/background-checks/:id`, verifyToken, validateDeleteBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.deleteBackgroundCheck);
 
 module.exports = routing;
