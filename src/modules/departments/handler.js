@@ -37,10 +37,10 @@ class DepartmentsHandler {
     try {
       // Parse query parameters dengan konfigurasi standar
       const queryParams = parseStandardQuery(req, {
-        allowedColumns: ['department_name', 'department_segmentasi', 'created_at', 'updated_at'],
-        defaultOrder: ['created_at', 'desc'],
-        searchableColumns: ['department_name', 'department_segmentasi'],
-        allowedFilters: ['department_name', 'department_segmentasi', 'company_id']
+        allowedColumns: ['departments.department_name', 'departments.department_segmentasi', 'departments.created_at', 'departments.updated_at'],
+        defaultOrder: ['departments.created_at', 'desc'],
+        searchableColumns: ['departments.department_name', 'departments.department_segmentasi'],
+        allowedFilters: ['departments.department_name', 'departments.department_segmentasi', 'departments.company_id']
       });
 
       // Validasi query parameters
@@ -117,12 +117,37 @@ class DepartmentsHandler {
   // POST /departments/get - Get departments with POST method
   async getDepartmentsPost(req, res) {
     try {
+      // Map sort_by to include table prefix if needed
+      if (req.body.sort_by && !req.body.sort_by.includes('.')) {
+        const columnMapping = {
+          'department_name': 'departments.department_name',
+          'department_segmentasi': 'departments.department_segmentasi',
+          'created_at': 'departments.created_at',
+          'updated_at': 'departments.updated_at'
+        };
+        req.body.sort_by = columnMapping[req.body.sort_by] || req.body.sort_by;
+      }
+
+      // Map filter fields to include table prefix if needed
+      if (req.body.department_name !== undefined && req.body['departments.department_name'] === undefined) {
+        req.body['departments.department_name'] = req.body.department_name;
+        delete req.body.department_name;
+      }
+      if (req.body.department_segmentasi !== undefined && req.body['departments.department_segmentasi'] === undefined) {
+        req.body['departments.department_segmentasi'] = req.body.department_segmentasi;
+        delete req.body.department_segmentasi;
+      }
+      if (req.body.company_id !== undefined && req.body['departments.company_id'] === undefined) {
+        req.body['departments.company_id'] = req.body.company_id;
+        delete req.body.company_id;
+      }
+
       // Parse query parameters dari body request
       const queryParams = parseStandardQuery(req, {
-        allowedColumns: ['department_name', 'department_segmentasi', 'created_at', 'updated_at'],
-        defaultOrder: ['created_at', 'desc'],
-        searchableColumns: ['department_name', 'department_segmentasi'],
-        allowedFilters: ['department_name', 'department_segmentasi', 'company_id'],
+        allowedColumns: ['departments.department_name', 'departments.department_segmentasi', 'departments.created_at', 'departments.updated_at'],
+        defaultOrder: ['departments.created_at', 'desc'],
+        searchableColumns: ['departments.department_name', 'departments.department_segmentasi'],
+        allowedFilters: ['departments.department_name', 'departments.department_segmentasi', 'departments.company_id'],
         fromBody: true // Mengambil parameter dari body, bukan query string
       });
 

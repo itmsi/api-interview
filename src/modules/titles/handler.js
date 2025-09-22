@@ -37,10 +37,10 @@ class TitlesHandler {
     try {
       // Parse query parameters dengan konfigurasi standar
       const queryParams = parseStandardQuery(req, {
-        allowedColumns: ['title_name', 'created_at', 'updated_at'],
-        defaultOrder: ['created_at', 'desc'],
-        searchableColumns: ['title_name'],
-        allowedFilters: ['title_name', 'department_id']
+        allowedColumns: ['titles.title_name', 'titles.created_at', 'titles.updated_at'],
+        defaultOrder: ['titles.created_at', 'desc'],
+        searchableColumns: ['titles.title_name'],
+        allowedFilters: ['titles.title_name', 'titles.department_id']
       });
 
       // Validasi query parameters
@@ -90,12 +90,32 @@ class TitlesHandler {
   // POST /titles/get - Get titles with POST method
   async getTitlesPost(req, res) {
     try {
+      // Map sort_by to include table prefix if needed
+      if (req.body.sort_by && !req.body.sort_by.includes('.')) {
+        const columnMapping = {
+          'title_name': 'titles.title_name',
+          'created_at': 'titles.created_at',
+          'updated_at': 'titles.updated_at'
+        };
+        req.body.sort_by = columnMapping[req.body.sort_by] || req.body.sort_by;
+      }
+
+      // Map filter fields to include table prefix if needed
+      if (req.body.title_name !== undefined && req.body['titles.title_name'] === undefined) {
+        req.body['titles.title_name'] = req.body.title_name;
+        delete req.body.title_name;
+      }
+      if (req.body.department_id !== undefined && req.body['titles.department_id'] === undefined) {
+        req.body['titles.department_id'] = req.body.department_id;
+        delete req.body.department_id;
+      }
+
       // Parse query parameters dari body request
       const queryParams = parseStandardQuery(req, {
-        allowedColumns: ['title_name', 'created_at', 'updated_at'],
-        defaultOrder: ['created_at', 'desc'],
-        searchableColumns: ['title_name'],
-        allowedFilters: ['title_name', 'department_id'],
+        allowedColumns: ['titles.title_name', 'titles.created_at', 'titles.updated_at'],
+        defaultOrder: ['titles.created_at', 'desc'],
+        searchableColumns: ['titles.title_name'],
+        allowedFilters: ['titles.title_name', 'titles.department_id'],
         fromBody: true // Mengambil parameter dari body, bukan query string
       });
 

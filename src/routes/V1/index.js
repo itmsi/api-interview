@@ -8,6 +8,7 @@ const islands = require('../../modules/islands')
 const genders = require('../../modules/genders')
 const employees = require('../../modules/employees')
 const candidates = require('../../modules/candidates')
+const scheduleInterview = require('../../modules/scheduleInterview')
 const powerBi = require('../../modules/powerBi')
 const dashboard = require('../../modules/dashboard')
 const { verifyToken } = require('../../middlewares')
@@ -65,6 +66,15 @@ const {
   validateListCandidatesPost, 
   handleValidationErrors: handleCandidateValidationErrors 
 } = require('../../modules/candidates/validation')
+const { 
+  validateCreateScheduleInterview, 
+  validateUpdateScheduleInterview, 
+  validateGetScheduleInterview, 
+  validateDeleteScheduleInterview, 
+  validateListScheduleInterviews, 
+  validateListScheduleInterviewsPost, 
+  handleValidationErrors: handleScheduleInterviewValidationErrors 
+} = require('../../modules/scheduleInterview/validation')
 
 const routing = express();
 const API_TAG = '/api';
@@ -160,5 +170,14 @@ routing.get(`${API_TAG}/candidates/:id`, verifyToken, validateGetCandidate, hand
 routing.get(`${API_TAG}/candidates/:id/relations`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.getCandidateWithRelations);
 routing.put(`${API_TAG}/candidates/:id`, verifyToken, handleCandidateFileUpload, validateUpdateCandidate, handleCandidateValidationErrors, candidates.updateCandidate);
 routing.delete(`${API_TAG}/candidates/:id`, verifyToken, validateDeleteCandidate, handleCandidateValidationErrors, candidates.deleteCandidate);
+
+// Schedule Interview routes
+routing.post(`${API_TAG}/schedule-interviews/get`, verifyToken, validateListScheduleInterviewsPost, handleScheduleInterviewValidationErrors, scheduleInterview.getScheduleInterviewsPost);
+routing.post(`${API_TAG}/schedule-interviews`, verifyToken, validateCreateScheduleInterview, handleScheduleInterviewValidationErrors, scheduleInterview.createScheduleInterview);
+routing.put(`${API_TAG}/schedule-interviews/:id/restore`, verifyToken, validateGetScheduleInterview, handleScheduleInterviewValidationErrors, scheduleInterview.restoreScheduleInterview);
+routing.get(`${API_TAG}/schedule-interviews`, verifyToken, validateListScheduleInterviews, handleScheduleInterviewValidationErrors, scheduleInterview.listScheduleInterviews);
+routing.get(`${API_TAG}/schedule-interviews/:id`, verifyToken, validateGetScheduleInterview, handleScheduleInterviewValidationErrors, scheduleInterview.getScheduleInterview);
+routing.put(`${API_TAG}/schedule-interviews/:id`, verifyToken, validateUpdateScheduleInterview, handleScheduleInterviewValidationErrors, scheduleInterview.updateScheduleInterview);
+routing.delete(`${API_TAG}/schedule-interviews/:id`, verifyToken, validateDeleteScheduleInterview, handleScheduleInterviewValidationErrors, scheduleInterview.deleteScheduleInterview);
 
 module.exports = routing;
