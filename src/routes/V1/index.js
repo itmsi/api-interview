@@ -166,39 +166,39 @@ routing.get(`${API_TAG}/dashboard/activities`, verifyToken, validateGetRecentAct
 routing.post(`${API_TAG}/dashboard/activities`, verifyToken, validateGetRecentActivitiesPost, handleValidationErrors, dashboard.getRecentActivitiesPost);
 
 // Companies routes
-routing.post(`${API_TAG}/companies/get`, verifyToken, validateListCompaniesPost, handleCompanyValidationErrors, companies.getCompaniesPost);
-routing.get(`${API_TAG}/companies`, verifyToken, validateListCompanies, handleCompanyValidationErrors, companies.listCompanies);
-routing.get(`${API_TAG}/companies/:id`, verifyToken, validateGetCompany, handleCompanyValidationErrors, companies.getCompany);
-routing.get(`${API_TAG}/companies/:id/children`, verifyToken, validateGetCompany, handleCompanyValidationErrors, companies.getCompanyWithChildren);
+routing.post(`${API_TAG}/interview/companies/get`, verifyToken, validateListCompaniesPost, handleCompanyValidationErrors, companies.getCompaniesPost);
+routing.get(`${API_TAG}/interview/companies`, verifyToken, validateListCompanies, handleCompanyValidationErrors, companies.listCompanies);
+routing.get(`${API_TAG}/interview/companies/:id`, verifyToken, validateGetCompany, handleCompanyValidationErrors, companies.getCompany);
+routing.get(`${API_TAG}/interview/companies/:id/children`, verifyToken, validateGetCompany, handleCompanyValidationErrors, companies.getCompanyWithChildren);
 
 // Departments routes
-routing.post(`${API_TAG}/departments/get`, verifyToken, validateListDepartmentsPost, handleDepartmentValidationErrors, departments.getDepartmentsPost);
-routing.get(`${API_TAG}/departments`, verifyToken, validateListDepartments, handleDepartmentValidationErrors, departments.listDepartments);
-routing.get(`${API_TAG}/departments/:id`, verifyToken, validateGetDepartment, handleDepartmentValidationErrors, departments.getDepartment);
-routing.get(`${API_TAG}/departments/:id/company`, verifyToken, validateGetDepartment, handleDepartmentValidationErrors, departments.getDepartmentWithCompany);
-routing.get(`${API_TAG}/departments/:id/children`, verifyToken, validateGetDepartment, handleDepartmentValidationErrors, departments.getDepartmentWithChildren);
+routing.post(`${API_TAG}/interview/departments/get`, verifyToken, validateListDepartmentsPost, handleDepartmentValidationErrors, departments.getDepartmentsPost);
+routing.get(`${API_TAG}/interview/departments`, verifyToken, validateListDepartments, handleDepartmentValidationErrors, departments.listDepartments);
+routing.get(`${API_TAG}/interview/departments/:id`, verifyToken, validateGetDepartment, handleDepartmentValidationErrors, departments.getDepartment);
+routing.get(`${API_TAG}/interview/departments/:id/company`, verifyToken, validateGetDepartment, handleDepartmentValidationErrors, departments.getDepartmentWithCompany);
+routing.get(`${API_TAG}/interview/departments/:id/children`, verifyToken, validateGetDepartment, handleDepartmentValidationErrors, departments.getDepartmentWithChildren);
 
 // Titles routes
-routing.post(`${API_TAG}/titles/get`, verifyToken, validateListTitlesPost, handleTitleValidationErrors, titles.getTitlesPost);
-routing.get(`${API_TAG}/titles`, verifyToken, validateListTitles, handleTitleValidationErrors, titles.listTitles);
-routing.get(`${API_TAG}/titles/:id`, verifyToken, validateGetTitle, handleTitleValidationErrors, titles.getTitle);
-routing.get(`${API_TAG}/titles/:id/department`, verifyToken, validateGetTitle, handleTitleValidationErrors, titles.getTitleWithDepartment);
+routing.post(`${API_TAG}/interview/titles/get`, verifyToken, validateListTitlesPost, handleTitleValidationErrors, titles.getTitlesPost);
+routing.get(`${API_TAG}/interview/titles`, verifyToken, validateListTitles, handleTitleValidationErrors, titles.listTitles);
+routing.get(`${API_TAG}/interview/titles/:id`, verifyToken, validateGetTitle, handleTitleValidationErrors, titles.getTitle);
+routing.get(`${API_TAG}/interview/titles/:id/department`, verifyToken, validateGetTitle, handleTitleValidationErrors, titles.getTitleWithDepartment);
 
 // Islands routes
-routing.post(`${API_TAG}/islands/get`, verifyToken, validateListIslandsPost, handleIslandValidationErrors, islands.getIslandsPost);
-routing.get(`${API_TAG}/islands`, verifyToken, validateListIslands, handleIslandValidationErrors, islands.listIslands);
-routing.get(`${API_TAG}/islands/:id`, verifyToken, validateGetIsland, handleIslandValidationErrors, islands.getIsland);
+routing.post(`${API_TAG}/interview/islands/get`, verifyToken, validateListIslandsPost, handleIslandValidationErrors, islands.getIslandsPost);
+routing.get(`${API_TAG}/interview/islands`, verifyToken, validateListIslands, handleIslandValidationErrors, islands.listIslands);
+routing.get(`${API_TAG}/interview/islands/:id`, verifyToken, validateGetIsland, handleIslandValidationErrors, islands.getIsland);
 
 // Genders routes
-routing.post(`${API_TAG}/genders/get`, verifyToken, validateListGendersPost, handleGenderValidationErrors, genders.getGendersPost);
-routing.get(`${API_TAG}/genders`, verifyToken, validateListGenders, handleGenderValidationErrors, genders.listGenders);
-routing.get(`${API_TAG}/genders/:id`, verifyToken, validateGetGender, handleGenderValidationErrors, genders.getGender);
+routing.post(`${API_TAG}/interview/genders/get`, verifyToken, validateListGendersPost, handleGenderValidationErrors, genders.getGendersPost);
+routing.get(`${API_TAG}/interview/genders`, verifyToken, validateListGenders, handleGenderValidationErrors, genders.listGenders);
+routing.get(`${API_TAG}/interview/genders/:id`, verifyToken, validateGetGender, handleGenderValidationErrors, genders.getGender);
 
 // Employees routes
-routing.post(`${API_TAG}/employees/get`, verifyToken, validateListEmployeesPost, handleEmployeeValidationErrors, employees.getEmployeesPost);
-routing.get(`${API_TAG}/employees`, verifyToken, validateListEmployees, handleEmployeeValidationErrors, employees.listEmployees);
-routing.get(`${API_TAG}/employees/:id`, verifyToken, validateGetEmployee, handleEmployeeValidationErrors, employees.getEmployee);
-routing.get(`${API_TAG}/employees/:id/relations`, verifyToken, validateGetEmployee, handleEmployeeValidationErrors, employees.getEmployeeWithRelations);
+routing.post(`${API_TAG}/interview/employees/get`, verifyToken, validateListEmployeesPost, handleEmployeeValidationErrors, employees.getEmployeesPost);
+routing.get(`${API_TAG}/interview/employees`, verifyToken, validateListEmployees, handleEmployeeValidationErrors, employees.listEmployees);
+routing.get(`${API_TAG}/interview/employees/:id`, verifyToken, validateGetEmployee, handleEmployeeValidationErrors, employees.getEmployee);
+routing.get(`${API_TAG}/interview/employees/:id/relations`, verifyToken, validateGetEmployee, handleEmployeeValidationErrors, employees.getEmployeeWithRelations);
 
 // Candidates routes
 routing.post(`${API_TAG}/candidates/get`, verifyToken, validateListCandidatesPost, handleCandidateValidationErrors, candidates.getCandidatesPost);

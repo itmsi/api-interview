@@ -1,5 +1,56 @@
 const companiesPaths = {
-  '/companies/get': {
+  '/interview/companies': {
+    get: {
+      tags: ['Companies'],
+      summary: 'List companies',
+      description: 'Get a list of companies with optional filters',
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        {
+          name: 'page',
+          in: 'query',
+          required: false,
+          description: 'Page number',
+          schema: {
+            type: 'integer',
+            minimum: 1,
+            default: 1
+          }
+        },
+        {
+          name: 'limit',
+          in: 'query',
+          required: false,
+          description: 'Number of items per page',
+          schema: {
+            type: 'integer',
+            minimum: 1,
+            maximum: 100,
+            default: 10
+          }
+        }
+      ],
+      responses: {
+        200: {
+          description: 'Companies retrieved successfully',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/CompanyListResponse'
+              }
+            }
+          }
+        },
+        401: {
+          description: 'Unauthorized'
+        },
+        500: {
+          description: 'Internal server error'
+        }
+      }
+    }
+  },
+  '/interview/companies/get': {
     post: {
       tags: ['Companies'],
       summary: 'Get companies via POST method',
@@ -35,7 +86,7 @@ const companiesPaths = {
       }
     }
   },
-  '/companies/{id}': {
+  '/interview/companies/{id}': {
     get: {
       tags: ['Companies'],
       summary: 'Get company by ID',

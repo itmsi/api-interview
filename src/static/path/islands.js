@@ -1,5 +1,56 @@
 const islandsPaths = {
-  '/islands/get': {
+  '/interview/islands': {
+    get: {
+      tags: ['Islands'],
+      summary: 'List islands',
+      description: 'Get a list of islands with optional filters',
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        {
+          name: 'page',
+          in: 'query',
+          required: false,
+          description: 'Page number',
+          schema: {
+            type: 'integer',
+            minimum: 1,
+            default: 1
+          }
+        },
+        {
+          name: 'limit',
+          in: 'query',
+          required: false,
+          description: 'Number of items per page',
+          schema: {
+            type: 'integer',
+            minimum: 1,
+            maximum: 100,
+            default: 10
+          }
+        }
+      ],
+      responses: {
+        200: {
+          description: 'Islands retrieved successfully',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/IslandListResponse'
+              }
+            }
+          }
+        },
+        401: {
+          description: 'Unauthorized'
+        },
+        500: {
+          description: 'Internal server error'
+        }
+      }
+    }
+  },
+  '/interview/islands/get': {
     post: {
       tags: ['Islands'],
       summary: 'Get islands via POST method',
@@ -35,7 +86,7 @@ const islandsPaths = {
       }
     }
   },
-  '/islands/{id}': {
+  '/interview/islands/{id}': {
     get: {
       tags: ['Islands'],
       summary: 'Get island by ID',

@@ -1,5 +1,5 @@
 const titlesPaths = {
-  '/titles/get': {
+  '/interview/titles/get': {
     post: {
       tags: ['Titles'],
       summary: 'Get titles via POST method',
@@ -35,7 +35,7 @@ const titlesPaths = {
       }
     }
   },
-  '/titles/{id}': {
+  '/interview/titles/{id}': {
     get: {
       tags: ['Titles'],
       summary: 'Get title by ID',
