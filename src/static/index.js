@@ -30,6 +30,7 @@ const islandsSchema = require('./schema/islands');
 const gendersSchema = require('./schema/genders');
 const employeesSchema = require('./schema/employees');
 const candidatesSchema = require('./schema/candidates');
+const notesSchema = require('./schema/notes');
 const scheduleInterviewSchema = require('./schema/scheduleInterview');
 
 // Import paths
@@ -40,6 +41,7 @@ const islandsPaths = require('./path/islands');
 const gendersPaths = require('./path/genders');
 const employeesPaths = require('./path/employees');
 const candidatesPaths = require('./path/candidates');
+const notesPaths = require('./path/notes');
 const scheduleInterviewPaths = require('./path/scheduleInterview');
 
 // Combine all schemas
@@ -51,6 +53,7 @@ const schemas = {
   ...gendersSchema,
   ...employeesSchema,
   ...candidatesSchema,
+  ...notesSchema,
   ...scheduleInterviewSchema
 };
 
@@ -63,6 +66,7 @@ const paths = {
   ...gendersPaths,
   ...employeesPaths,
   ...candidatesPaths,
+  ...notesPaths,
   ...scheduleInterviewPaths
 };
 

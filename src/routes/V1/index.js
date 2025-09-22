@@ -8,6 +8,7 @@ const islands = require('../../modules/islands')
 const genders = require('../../modules/genders')
 const employees = require('../../modules/employees')
 const candidates = require('../../modules/candidates')
+const notes = require('../../modules/notes')
 const scheduleInterview = require('../../modules/scheduleInterview')
 const powerBi = require('../../modules/powerBi')
 const dashboard = require('../../modules/dashboard')
@@ -66,6 +67,14 @@ const {
   validateListCandidatesPost, 
   handleValidationErrors: handleCandidateValidationErrors 
 } = require('../../modules/candidates/validation')
+const { 
+  validateCreateNote, 
+  validateUpdateNote, 
+  validateGetNote, 
+  validateDeleteNote, 
+  validateListNotesPost, 
+  handleValidationErrors: handleNoteValidationErrors 
+} = require('../../modules/notes/validation')
 const { 
   validateCreateScheduleInterview, 
   validateUpdateScheduleInterview, 
@@ -170,6 +179,13 @@ routing.get(`${API_TAG}/candidates/:id`, verifyToken, validateGetCandidate, hand
 routing.get(`${API_TAG}/candidates/:id/relations`, verifyToken, validateGetCandidate, handleCandidateValidationErrors, candidates.getCandidateWithRelations);
 routing.put(`${API_TAG}/candidates/:id`, verifyToken, handleCandidateFileUpload, validateUpdateCandidate, handleCandidateValidationErrors, candidates.updateCandidate);
 routing.delete(`${API_TAG}/candidates/:id`, verifyToken, validateDeleteCandidate, handleCandidateValidationErrors, candidates.deleteCandidate);
+
+// Notes routes
+routing.post(`${API_TAG}/notes/get`, verifyToken, validateListNotesPost, handleNoteValidationErrors, notes.getNotesPost);
+routing.post(`${API_TAG}/notes`, verifyToken, validateCreateNote, handleNoteValidationErrors, notes.createNote);
+routing.get(`${API_TAG}/notes/:id`, verifyToken, validateGetNote, handleNoteValidationErrors, notes.getNote);
+routing.put(`${API_TAG}/notes/:id`, verifyToken, validateUpdateNote, handleNoteValidationErrors, notes.updateNote);
+routing.delete(`${API_TAG}/notes/delete`, verifyToken, validateDeleteNote, handleNoteValidationErrors, notes.deleteNote);
 
 // Schedule Interview routes
 routing.post(`${API_TAG}/schedule-interviews/get`, verifyToken, validateListScheduleInterviewsPost, handleScheduleInterviewValidationErrors, scheduleInterview.getScheduleInterviewsPost);
