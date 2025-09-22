@@ -117,6 +117,56 @@ const backgroundCheckFileFilter = (req, file, cb) => {
   }
 };
 
+// File filter function for on board documents
+const onBoardDocumentFileFilter = (req, file, cb) => {
+  // Allow all file types for on board documents
+  const allowedTypes = [
+    // Images
+    'image/jpeg',
+    'image/jpg', 
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'image/bmp',
+    'image/tiff',
+    'image/svg+xml',
+    // Documents
+    'application/pdf',
+    'application/msword', // .doc
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'application/vnd.ms-excel', // .xls
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+    'application/vnd.ms-powerpoint', // .ppt
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+    'text/plain', // .txt
+    'text/csv', // .csv
+    'application/rtf', // .rtf
+    // Archives
+    'application/zip',
+    'application/x-rar-compressed',
+    'application/x-7z-compressed',
+    'application/gzip',
+    // Other common types
+    'application/json',
+    'application/xml',
+    'text/xml',
+    'application/octet-stream' // Generic binary
+  ];
+
+  // Check file extension as fallback
+  const allowedExtensions = [
+    '.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.svg',
+    '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.csv', '.rtf',
+    '.zip', '.rar', '.7z', '.gz',
+    '.json', '.xml'
+  ];
+  const fileExtension = path.extname(file.originalname).toLowerCase();
+
+  // Allow all files - remove strict validation for on board documents
+  console.log('DEBUG: On board document file upload - mimetype:', file.mimetype, 'extension:', fileExtension);
+  cb(null, true);
+};
+
 // Configure multer for PowerBI
 const upload = multer({
   storage: storage,
@@ -147,6 +197,16 @@ const backgroundCheckUpload = multer({
   }
 });
 
+// Configure multer for on board document attachments
+const onBoardDocumentUpload = multer({
+  storage: storage,
+  fileFilter: onBoardDocumentFileFilter,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit per file
+    files: 1 // Only one file per request
+  }
+});
+
 // Middleware for single file upload (PowerBI)
 const uploadSingleFile = upload.single('file');
 
@@ -158,6 +218,9 @@ const uploadCandidateFiles = candidateUpload.fields([
 
 // Middleware for background check file upload
 const uploadBackgroundCheckFile = backgroundCheckUpload.single('file_attachment');
+
+// Middleware for on board document file upload
+const uploadOnBoardDocumentFile = onBoardDocumentUpload.single('on_board_documents_file');
 
 // Middleware wrapper to handle multer errors for single file (PowerBI)
 const handleFileUpload = (req, res, next) => {
@@ -275,6 +338,43 @@ const handleBackgroundCheckFileUpload = (req, res, next) => {
   });
 };
 
+// Middleware wrapper to handle multer errors for on board document files
+const handleOnBoardDocumentFileUpload = (req, res, next) => {
+  console.log('DEBUG: handleOnBoardDocumentFileUpload called');
+  console.log('DEBUG: req.body before upload:', req.body);
+  uploadOnBoardDocumentFile(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          success: false,
+          message: 'File too large. Maximum size is 50MB.',
+          error: err.message
+        });
+      }
+      if (err.code === 'LIMIT_FILE_COUNT') {
+        return res.status(400).json({
+          success: false,
+          message: 'Too many files. Only one file is allowed.',
+          error: err.message
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'File upload error',
+        error: err.message
+      });
+    } else if (err) {
+      return res.status(400).json({
+        success: false,
+        message: 'File validation error',
+        error: err.message
+      });
+    }
+    console.log('DEBUG: Files processed successfully in handleOnBoardDocumentFileUpload, req.file:', req.file);
+    next();
+  });
+};
+
 // Generate unique filename
 const generateFileName = (originalName) => {
   const timestamp = Date.now();
@@ -309,6 +409,7 @@ module.exports = {
   handleFileUpload,
   handleCandidateFileUpload,
   handleBackgroundCheckFileUpload,
+  handleOnBoardDocumentFileUpload,
   generateFileName,
   getContentType
 };

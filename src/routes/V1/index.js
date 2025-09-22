@@ -15,8 +15,9 @@ const interview = require('../../modules/interview')
 const powerBi = require('../../modules/powerBi')
 const dashboard = require('../../modules/dashboard')
 const backgroundCheck = require('../../modules/background_check')
+const onBoardDocuments = require('../../modules/onBoardDocuments')
 const { verifyToken } = require('../../middlewares')
-const { handleFileUpload, handleCandidateFileUpload, handleBackgroundCheckFileUpload } = require('../../middlewares/fileUpload')
+const { handleFileUpload, handleCandidateFileUpload, handleBackgroundCheckFileUpload, handleOnBoardDocumentFileUpload } = require('../../middlewares/fileUpload')
 const { 
   validateGetDashboardData, 
   validateGetRecentActivities, 
@@ -116,6 +117,16 @@ const {
   validateGetBackgroundChecksByCandidate,
   handleValidationErrors: handleBackgroundCheckValidationErrors 
 } = require('../../modules/background_check/validation')
+const { 
+  validateCreateOnBoardDocument, 
+  validateUpdateOnBoardDocument, 
+  validateGetOnBoardDocument, 
+  validateDeleteOnBoardDocument, 
+  validateListOnBoardDocuments, 
+  validateListOnBoardDocumentsPost, 
+  validateGetOnBoardDocumentsByCandidate,
+  handleValidationErrors: handleOnBoardDocumentValidationErrors 
+} = require('../../modules/onBoardDocuments/validation')
 
 const routing = express();
 const API_TAG = '/api';
@@ -258,5 +269,16 @@ routing.get(`${API_TAG}/background-checks/:id/relations`, verifyToken, validateG
 routing.get(`${API_TAG}/background-checks/candidate/:candidateId`, verifyToken, validateGetBackgroundChecksByCandidate, handleBackgroundCheckValidationErrors, backgroundCheck.getBackgroundChecksByCandidate);
 routing.put(`${API_TAG}/background-checks/:id`, verifyToken, handleBackgroundCheckFileUpload, validateUpdateBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.updateBackgroundCheck);
 routing.delete(`${API_TAG}/background-checks/:id`, verifyToken, validateDeleteBackgroundCheck, handleBackgroundCheckValidationErrors, backgroundCheck.deleteBackgroundCheck);
+
+// On Board Documents routes
+routing.post(`${API_TAG}/on-board-documents/get`, verifyToken, validateListOnBoardDocumentsPost, handleOnBoardDocumentValidationErrors, onBoardDocuments.getOnBoardDocumentsPost);
+routing.post(`${API_TAG}/on-board-documents`, verifyToken, handleOnBoardDocumentFileUpload, validateCreateOnBoardDocument, handleOnBoardDocumentValidationErrors, onBoardDocuments.createOnBoardDocument);
+routing.post(`${API_TAG}/on-board-documents/:id/restore`, verifyToken, validateGetOnBoardDocument, handleOnBoardDocumentValidationErrors, onBoardDocuments.restoreOnBoardDocument);
+routing.get(`${API_TAG}/on-board-documents`, verifyToken, validateListOnBoardDocuments, handleOnBoardDocumentValidationErrors, onBoardDocuments.listOnBoardDocuments);
+routing.get(`${API_TAG}/on-board-documents/:id`, verifyToken, validateGetOnBoardDocument, handleOnBoardDocumentValidationErrors, onBoardDocuments.getOnBoardDocument);
+routing.get(`${API_TAG}/on-board-documents/:id/relations`, verifyToken, validateGetOnBoardDocument, handleOnBoardDocumentValidationErrors, onBoardDocuments.getOnBoardDocumentWithRelations);
+routing.get(`${API_TAG}/on-board-documents/candidate/:candidateId`, verifyToken, validateGetOnBoardDocumentsByCandidate, handleOnBoardDocumentValidationErrors, onBoardDocuments.getOnBoardDocumentsByCandidate);
+routing.put(`${API_TAG}/on-board-documents/:id`, verifyToken, handleOnBoardDocumentFileUpload, validateUpdateOnBoardDocument, handleOnBoardDocumentValidationErrors, onBoardDocuments.updateOnBoardDocument);
+routing.delete(`${API_TAG}/on-board-documents/:id`, verifyToken, validateDeleteOnBoardDocument, handleOnBoardDocumentValidationErrors, onBoardDocuments.deleteOnBoardDocument);
 
 module.exports = routing;

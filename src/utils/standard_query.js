@@ -146,10 +146,24 @@ const buildCountQuery = (baseQuery, queryParams) => {
   if (queryParams.search.searchTerm && queryParams.search.searchableColumns.length > 0) {
     countQuery = countQuery.where(function() {
       queryParams.search.searchableColumns.forEach((column, index) => {
+        // Handle ambiguous column references
+        let columnName = column;
+        if (column === 'on_board_documents_name') {
+          columnName = 'on_board_documents.on_board_documents_name';
+        } else if (column === 'candidate_name') {
+          columnName = 'candidates.candidate_name';
+        } else if (column === 'candidate_email') {
+          columnName = 'candidates.candidate_email';
+        } else if (column === 'company_name') {
+          columnName = 'companies.company_name';
+        } else if (column === 'department_name') {
+          columnName = 'departments.department_name';
+        }
+        
         if (index === 0) {
-          this.where(column, 'ilike', `%${queryParams.search.searchTerm}%`);
+          this.where(columnName, 'ilike', `%${queryParams.search.searchTerm}%`);
         } else {
-          this.orWhere(column, 'ilike', `%${queryParams.search.searchTerm}%`);
+          this.orWhere(columnName, 'ilike', `%${queryParams.search.searchTerm}%`);
         }
       });
     });
@@ -159,7 +173,23 @@ const buildCountQuery = (baseQuery, queryParams) => {
   Object.keys(queryParams.filters).forEach(filterKey => {
     const filterValue = queryParams.filters[filterKey];
     if (filterValue !== undefined && filterValue !== '') {
-      countQuery = countQuery.where(filterKey, filterValue);
+      // Handle ambiguous column references
+      let columnName = filterKey;
+      if (filterKey === 'candidate_id') {
+        // Check if we're dealing with background_check or on_board_documents
+        if (countQuery.toString().includes('background_check')) {
+          columnName = 'background_check.candidate_id';
+        } else {
+          columnName = 'on_board_documents.candidate_id';
+        }
+      } else if (filterKey === 'company_id') {
+        columnName = 'candidates.company_id';
+      } else if (filterKey === 'departement_id') {
+        columnName = 'candidates.departement_id';
+      } else if (filterKey === 'title_id') {
+        columnName = 'candidates.title_id';
+      }
+      countQuery = countQuery.where(columnName, filterValue);
     }
   });
   
@@ -179,10 +209,24 @@ const applyStandardFilters = (baseQuery, queryParams) => {
   if (queryParams.search.searchTerm && queryParams.search.searchableColumns.length > 0) {
     query = query.where(function() {
       queryParams.search.searchableColumns.forEach((column, index) => {
+        // Handle ambiguous column references
+        let columnName = column;
+        if (column === 'on_board_documents_name') {
+          columnName = 'on_board_documents.on_board_documents_name';
+        } else if (column === 'candidate_name') {
+          columnName = 'candidates.candidate_name';
+        } else if (column === 'candidate_email') {
+          columnName = 'candidates.candidate_email';
+        } else if (column === 'company_name') {
+          columnName = 'companies.company_name';
+        } else if (column === 'department_name') {
+          columnName = 'departments.department_name';
+        }
+        
         if (index === 0) {
-          this.where(column, 'ilike', `%${queryParams.search.searchTerm}%`);
+          this.where(columnName, 'ilike', `%${queryParams.search.searchTerm}%`);
         } else {
-          this.orWhere(column, 'ilike', `%${queryParams.search.searchTerm}%`);
+          this.orWhere(columnName, 'ilike', `%${queryParams.search.searchTerm}%`);
         }
       });
     });
@@ -192,12 +236,41 @@ const applyStandardFilters = (baseQuery, queryParams) => {
   Object.keys(queryParams.filters).forEach(filterKey => {
     const filterValue = queryParams.filters[filterKey];
     if (filterValue !== undefined && filterValue !== '') {
-      query = query.where(filterKey, filterValue);
+      // Handle ambiguous column references
+      let columnName = filterKey;
+      if (filterKey === 'candidate_id') {
+        // Check if we're dealing with background_check or on_board_documents
+        if (query.toString().includes('background_check')) {
+          columnName = 'background_check.candidate_id';
+        } else {
+          columnName = 'on_board_documents.candidate_id';
+        }
+      } else if (filterKey === 'company_id') {
+        columnName = 'candidates.company_id';
+      } else if (filterKey === 'departement_id') {
+        columnName = 'candidates.departement_id';
+      } else if (filterKey === 'title_id') {
+        columnName = 'candidates.title_id';
+      }
+      query = query.where(columnName, filterValue);
     }
   });
   
   // Apply sorting
-  query = query.orderBy(queryParams.sorting.sortBy, queryParams.sorting.sortOrder);
+  let sortColumn = queryParams.sorting.sortBy;
+  if (sortColumn === 'create_at' || sortColumn === 'update_at') {
+    // Check if we're dealing with background_check or on_board_documents
+    if (query.toString().includes('background_check')) {
+      sortColumn = `background_check.${sortColumn}`;
+    } else {
+      sortColumn = `on_board_documents.${sortColumn}`;
+    }
+  } else if (sortColumn === 'on_board_documents_name') {
+    sortColumn = `on_board_documents.${sortColumn}`;
+  } else if (sortColumn === 'background_check_status') {
+    sortColumn = `background_check.${sortColumn}`;
+  }
+  query = query.orderBy(sortColumn, queryParams.sorting.sortOrder);
   
   // Apply pagination
   query = query.limit(queryParams.pagination.limit).offset(queryParams.pagination.offset);
