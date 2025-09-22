@@ -8,6 +8,7 @@ const islands = require('../../modules/islands')
 const genders = require('../../modules/genders')
 const employees = require('../../modules/employees')
 const candidates = require('../../modules/candidates')
+const applicant = require('../../modules/applicant')
 const notes = require('../../modules/notes')
 const scheduleInterview = require('../../modules/scheduleInterview')
 const interview = require('../../modules/interview')
@@ -94,6 +95,15 @@ const {
   validateListInterviewsPost, 
   handleValidationErrors: handleInterviewValidationErrors 
 } = require('../../modules/interview/validation')
+const { 
+  validateCreateApplicant, 
+  validateUpdateApplicant, 
+  validateGetApplicant, 
+  validateDeleteApplicant, 
+  validateListApplicants, 
+  validateListApplicantsPost, 
+  handleValidationErrors: handleApplicantValidationErrors 
+} = require('../../modules/applicant/validation')
 
 const routing = express();
 const API_TAG = '/api';
@@ -214,5 +224,13 @@ routing.get(`${API_TAG}/interviews`, verifyToken, validateListInterviews, handle
 routing.get(`${API_TAG}/interviews/:id`, verifyToken, validateGetInterview, handleInterviewValidationErrors, interview.getInterview);
 routing.put(`${API_TAG}/interviews/:id`, verifyToken, validateUpdateInterview, handleInterviewValidationErrors, interview.updateInterview);
 routing.delete(`${API_TAG}/interviews/:id`, verifyToken, validateDeleteInterview, handleInterviewValidationErrors, interview.deleteInterview);
+
+// Applicant routes
+routing.post(`${API_TAG}/applicants/get`, verifyToken, validateListApplicantsPost, handleApplicantValidationErrors, applicant.getApplicantsPost);
+routing.post(`${API_TAG}/applicants`, verifyToken, validateCreateApplicant, handleApplicantValidationErrors, applicant.createApplicant);
+routing.get(`${API_TAG}/applicants`, verifyToken, validateListApplicants, handleApplicantValidationErrors, applicant.listApplicants);
+routing.get(`${API_TAG}/applicants/:applicate_id`, verifyToken, validateGetApplicant, handleApplicantValidationErrors, applicant.getApplicant);
+routing.put(`${API_TAG}/applicants/:applicate_id`, verifyToken, validateUpdateApplicant, handleApplicantValidationErrors, applicant.updateApplicant);
+routing.delete(`${API_TAG}/applicants/:applicate_id`, verifyToken, validateDeleteApplicant, handleApplicantValidationErrors, applicant.deleteApplicant);
 
 module.exports = routing;
