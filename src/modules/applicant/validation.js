@@ -528,6 +528,16 @@ const validateListApplicantsPost = [
     .trim(),
 ];
 
+// Validation for public create applicant (same as regular create but without authentication)
+const validateCreateApplicantPublic = [
+  ...validateApplicantInformation,
+  ...validateEducationBackgrounds,
+  ...validateInformalEducationQualifications,
+  ...validateFamilyBackgrounds,
+  ...validateWorkExperiences,
+  ...validateReferences,
+];
+
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -547,5 +557,6 @@ module.exports = {
   validateDeleteApplicant,
   validateListApplicants,
   validateListApplicantsPost,
+  validateCreateApplicantPublic,
   handleValidationErrors
 };

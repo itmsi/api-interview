@@ -316,6 +316,84 @@ class ApplicantHandler {
       return sendQueryError(res, 'Failed to list applicants', 500);
     }
   }
+
+  // PUBLIC ENDPOINT - POST /public/applicants - Create new applicant (no authentication required)
+  async createApplicantPublic(req, res) {
+    try {
+      const {
+        first_name,
+        middle_name,
+        last_name,
+        mobile,
+        email,
+        id_number,
+        position_applied_for,
+        expected_salary,
+        emergency_contact,
+        present_address,
+        city,
+        date_of_birth,
+        blood_type,
+        tax_identification_number,
+        working_available_date,
+        religion,
+        education_backgrounds = [],
+        informal_education_qualifications = [],
+        family_backgrounds = [],
+        work_experiences = [],
+        references = []
+      } = req.body;
+
+      // For public endpoint, we don't have user context, so create_by will be null
+      const createdBy = null;
+
+      // Prepare main applicant data
+      const applicantData = {
+        first_name,
+        middle_name,
+        last_name,
+        mobile,
+        email,
+        id_number,
+        position_applied_for,
+        expected_salary,
+        emergency_contact,
+        present_address,
+        city,
+        date_of_birth,
+        blood_type,
+        tax_identification_number,
+        working_available_date,
+        religion,
+        create_by: createdBy
+      };
+
+      // Prepare related data
+      const relatedData = {
+        education_backgrounds,
+        informal_education_qualifications,
+        family_backgrounds,
+        work_experiences,
+        references
+      };
+
+      // Create applicant with all related data in transaction
+      const applicant = await ApplicantRepository.create(applicantData, relatedData);
+
+      res.status(201).json({
+        success: true,
+        message: 'Applicant created successfully',
+        data: applicant
+      });
+    } catch (error) {
+      console.error('Error creating applicant (public):', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create applicant',
+        error: error.message
+      });
+    }
+  }
 }
 
 module.exports = new ApplicantHandler();

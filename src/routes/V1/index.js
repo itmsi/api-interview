@@ -102,6 +102,7 @@ const {
   validateDeleteApplicant, 
   validateListApplicants, 
   validateListApplicantsPost, 
+  validateCreateApplicantPublic,
   handleValidationErrors: handleApplicantValidationErrors 
 } = require('../../modules/applicant/validation')
 
@@ -232,5 +233,8 @@ routing.get(`${API_TAG}/applicants`, verifyToken, validateListApplicants, handle
 routing.get(`${API_TAG}/applicants/:applicate_id`, verifyToken, validateGetApplicant, handleApplicantValidationErrors, applicant.getApplicant);
 routing.put(`${API_TAG}/applicants/:applicate_id`, verifyToken, validateUpdateApplicant, handleApplicantValidationErrors, applicant.updateApplicant);
 routing.delete(`${API_TAG}/applicants/:applicate_id`, verifyToken, validateDeleteApplicant, handleApplicantValidationErrors, applicant.deleteApplicant);
+
+// Public Applicant routes (no authentication required)
+routing.post(`${API_TAG}/public/applicants`, validateCreateApplicantPublic, handleApplicantValidationErrors, applicant.createApplicantPublic);
 
 module.exports = routing;

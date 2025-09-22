@@ -62,7 +62,55 @@ Menyimpan riwayat pengalaman kerja:
 
 ## API Endpoints
 
-### 1. POST /api/applicants/get
+### Public Endpoints (No Authentication Required)
+
+#### 1. POST /api/public/applicants
+Membuat pelamar baru untuk publik (tanpa perlu login/token)
+
+**Request Body:** Sama dengan endpoint create applicant biasa
+```json
+{
+  "first_name": "string",
+  "middle_name": "string",
+  "last_name": "string",
+  "mobile": "string",
+  "email": "string",
+  "id_number": "string",
+  "position_applied_for": "string",
+  "expected_salary": "string",
+  "emergency_contact": "string",
+  "present_address": "string",
+  "city": "string",
+  "date_of_birth": "string",
+  "blood_type": "string",
+  "tax_identification_number": "string",
+  "working_available_date": "string",
+  "religion": "string",
+  "education_backgrounds": [...],
+  "informal_education_qualifications": [...],
+  "family_backgrounds": [...],
+  "work_experiences": [...],
+  "references": [...]
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Applicant created successfully",
+  "data": {
+    "applicate_id": "uuid",
+    "first_name": "John",
+    "last_name": "Doe",
+    ...
+  }
+}
+```
+
+### Protected Endpoints (Authentication Required)
+
+#### 2. POST /api/applicants/get
 Mengambil daftar pelamar dengan filtering (menggunakan method POST)
 
 **Request Body:**
@@ -93,8 +141,8 @@ Mengambil daftar pelamar dengan filtering (menggunakan method POST)
 }
 ```
 
-### 2. POST /api/applicants
-Membuat pelamar baru dengan semua data terkait
+#### 3. POST /api/applicants
+Membuat pelamar baru dengan semua data terkait (memerlukan authentication)
 
 **Request Body:**
 ```json
@@ -162,13 +210,13 @@ Membuat pelamar baru dengan semua data terkait
 }
 ```
 
-### 3. GET /api/applicants/:applicate_id
+#### 4. GET /api/applicants/:applicate_id
 Mengambil data pelamar berdasarkan ID dengan semua data terkait
 
 **Path Parameters:**
 - `applicate_id`: UUID pelamar
 
-### 4. PUT /api/applicants/:applicate_id
+#### 5. PUT /api/applicants/:applicate_id
 Mengupdate data pelamar dengan semua data terkait
 
 **Path Parameters:**
@@ -176,7 +224,7 @@ Mengupdate data pelamar dengan semua data terkait
 
 **Request Body:** Sama dengan POST create
 
-### 5. DELETE /api/applicants/:applicate_id
+#### 6. DELETE /api/applicants/:applicate_id
 Menghapus pelamar (soft delete) beserta semua data terkait
 
 **Path Parameters:**
@@ -236,7 +284,27 @@ src/repository/postgres/migrations/
 
 ## Contoh Penggunaan
 
-### Membuat Pelamar Baru
+### Membuat Pelamar Baru (Public - Tanpa Authentication)
+```bash
+curl -X POST "http://localhost:3000/api/public/applicants" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "mobile": "081234567890",
+    "position_applied_for": "Software Engineer",
+    "education_backgrounds": [
+      {
+        "type_of_school": "University",
+        "name_of_school": "Universitas Indonesia",
+        "major_of_school": "Computer Science"
+      }
+    ]
+  }'
+```
+
+### Membuat Pelamar Baru (Protected - Dengan Authentication)
 ```bash
 curl -X POST "http://localhost:3000/api/applicants" \
   -H "Authorization: Bearer YOUR_TOKEN" \

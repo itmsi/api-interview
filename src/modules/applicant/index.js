@@ -7,4 +7,5 @@ module.exports = {
   listApplicants: ApplicantHandler.listApplicants.bind(ApplicantHandler),
   updateApplicant: ApplicantHandler.updateApplicant.bind(ApplicantHandler),
   deleteApplicant: ApplicantHandler.deleteApplicant.bind(ApplicantHandler),
+  createApplicantPublic: ApplicantHandler.createApplicantPublic.bind(ApplicantHandler),
 };

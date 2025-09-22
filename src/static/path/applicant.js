@@ -376,6 +376,68 @@ const applicantPaths = {
         }
       }
     }
+  },
+  '/public/applicants': {
+    post: {
+      tags: ['Public Applicants'],
+      summary: 'Create new applicant (Public - No Authentication Required)',
+      description: 'Create a new applicant with all related information without requiring authentication. This endpoint is designed for public job application submissions.',
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/CreateApplicantRequest'
+            }
+          }
+        }
+      },
+      responses: {
+        201: {
+          description: 'Applicant created successfully',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  success: {
+                    type: 'boolean',
+                    example: true
+                  },
+                  message: {
+                    type: 'string',
+                    example: 'Applicant created successfully'
+                  },
+                  data: {
+                    $ref: '#/components/schemas/ApplicantInformation'
+                  }
+                }
+              }
+            }
+          }
+        },
+        400: {
+          description: 'Bad request - validation failed',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/ErrorResponse'
+              }
+            }
+          }
+        },
+        500: {
+          description: 'Internal server error',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/ErrorResponse'
+              }
+            }
+          }
+        }
+      }
+    }
   }
 };
 
