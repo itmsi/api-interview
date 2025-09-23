@@ -98,9 +98,6 @@ class PowerBiHandler {
       });
 
       // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Validasi filter values
       if (queryParams.filters.status && !['active', 'inactive', 'draft'].includes(queryParams.filters.status)) {
@@ -251,9 +248,6 @@ class PowerBiHandler {
       queryParams.filters.category_id = category_id;
 
       // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Validasi filter values
       if (queryParams.filters.status && !['active', 'inactive', 'draft'].includes(queryParams.filters.status)) {
@@ -300,9 +294,6 @@ class PowerBiHandler {
       });
 
       // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Validasi filter values
       if (queryParams.filters.status && !['active', 'inactive', 'draft'].includes(queryParams.filters.status)) {

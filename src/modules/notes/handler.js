@@ -201,9 +201,6 @@ class NotesHandler {
       });
 
       // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Get data dengan filter dan pagination
       const result = await NotesRepository.findWithFilters(queryParams);

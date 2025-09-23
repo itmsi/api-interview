@@ -23,9 +23,6 @@ class DashboardHandler {
 
 
       // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Validasi filter status jika ada
       if (queryParams.filters.status && !['active', 'inactive', 'draft'].includes(queryParams.filters.status)) {

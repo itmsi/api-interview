@@ -43,11 +43,6 @@ class EmployeesHandler {
         allowedFilters: ['employee_name', 'employee_email', 'title_id', 'department_id', 'gender_id', 'island_id', 'employee_activation_status', 'employee_disabled']
       });
 
-      // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
-
       // Get data dengan filter dan pagination
       const result = await EmployeesRepository.findWithFilters(queryParams);
 
@@ -98,11 +93,6 @@ class EmployeesHandler {
         allowedFilters: ['employee_name', 'employee_email', 'title_id', 'department_id', 'gender_id', 'island_id', 'employee_activation_status', 'employee_disabled'],
         fromBody: true // Mengambil parameter dari body, bukan query string
       });
-
-      // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Get data dengan filter dan pagination
       const result = await EmployeesRepository.findWithFilters(queryParams);

@@ -44,9 +44,6 @@ class CompaniesHandler {
       });
 
       // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Get data dengan filter dan pagination
       const result = await CompaniesRepository.findWithFilters(queryParams);
@@ -100,9 +97,6 @@ class CompaniesHandler {
       });
 
       // Validasi query parameters
-      if (queryParams.pagination.limit > 100) {
-        return sendQueryError(res, 'Limit tidak boleh lebih dari 100', 400);
-      }
 
       // Get data dengan filter dan pagination
       const result = await CompaniesRepository.findWithFilters(queryParams);

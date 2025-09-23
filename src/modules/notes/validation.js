@@ -69,8 +69,8 @@ const validateListNotesPost = [
     .withMessage('Page must be a positive integer'),
   body('limit')
     .optional()
-    .isInt({ min: 1, max: 100 })
-    .withMessage('Limit must be between 1 and 100'),
+    .isInt({ min: 1 })
+    .withMessage('Limit must be a positive integer'),
   body('search')
     .optional()
     .isLength({ max: 100 })

@@ -114,8 +114,8 @@ const validatePagination = (page, limit) => {
     errors.push('Page must be a positive integer')
   }
   
-  if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
-    errors.push('Limit must be between 1 and 100')
+  if (isNaN(limitNum) || limitNum < 1) {
+    errors.push('Limit must be a positive integer')
   }
   
   return {
