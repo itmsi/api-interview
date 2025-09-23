@@ -33,6 +33,7 @@ const candidatesSchema = require('./schema/candidates');
 const notesSchema = require('./schema/notes');
 const scheduleInterviewSchema = require('./schema/scheduleInterview');
 const interviewSchema = require('./schema/interview');
+const reviewInterviewSchema = require('./schema/reviewInterview');
 const applicantSchema = require('./schema/applicant');
 const backgroundCheckSchema = require('./schema/background_check');
 const onBoardDocumentsSchema = require('./schema/onBoardDocuments');
@@ -48,6 +49,7 @@ const candidatesPaths = require('./path/candidates');
 const notesPaths = require('./path/notes');
 const scheduleInterviewPaths = require('./path/scheduleInterview');
 const interviewPaths = require('./path/interview');
+const reviewInterviewPaths = require('./path/reviewInterview');
 const applicantPaths = require('./path/applicant');
 const backgroundCheckPaths = require('./path/background_check');
 const onBoardDocumentsPaths = require('./path/onBoardDocuments');
@@ -64,6 +66,7 @@ const schemas = {
   ...notesSchema,
   ...scheduleInterviewSchema,
   ...interviewSchema,
+  ...reviewInterviewSchema,
   ...applicantSchema,
   ...backgroundCheckSchema,
   ...onBoardDocumentsSchema
@@ -81,6 +84,7 @@ const paths = {
   ...notesPaths,
   ...scheduleInterviewPaths,
   ...interviewPaths,
+  ...reviewInterviewPaths,
   ...applicantPaths,
   ...backgroundCheckPaths,
   ...onBoardDocumentsPaths

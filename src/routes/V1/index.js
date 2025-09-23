@@ -12,6 +12,7 @@ const applicant = require('../../modules/applicant')
 const notes = require('../../modules/notes')
 const scheduleInterview = require('../../modules/scheduleInterview')
 const interview = require('../../modules/interview')
+const reviewInterview = require('../../modules/reviewInterview')
 const powerBi = require('../../modules/powerBi')
 const dashboard = require('../../modules/dashboard')
 const backgroundCheck = require('../../modules/background_check')
@@ -97,6 +98,10 @@ const {
   validateListInterviewsPost, 
   handleValidationErrors: handleInterviewValidationErrors 
 } = require('../../modules/interview/validation')
+const { 
+  validateGetReviewInterviewData,
+  handleValidationErrors: handleReviewInterviewValidationErrors 
+} = require('../../modules/reviewInterview/validation')
 const { 
   validateCreateApplicant, 
   validateUpdateApplicant, 
@@ -247,6 +252,9 @@ routing.get(`${API_TAG}/interviews`, verifyToken, validateListInterviews, handle
 routing.get(`${API_TAG}/interviews/:id`, verifyToken, validateGetInterview, handleInterviewValidationErrors, interview.getInterview);
 routing.put(`${API_TAG}/interviews/:id`, verifyToken, validateUpdateInterview, handleInterviewValidationErrors, interview.updateInterview);
 routing.delete(`${API_TAG}/interviews/:id`, verifyToken, validateDeleteInterview, handleInterviewValidationErrors, interview.deleteInterview);
+
+// Review Interview routes
+routing.post(`${API_TAG}/reviewInterview`, verifyToken, validateGetReviewInterviewData, handleReviewInterviewValidationErrors, reviewInterview.getReviewInterviewData);
 
 // Applicant routes
 routing.post(`${API_TAG}/applicants/get`, verifyToken, validateListApplicantsPost, handleApplicantValidationErrors, applicant.getApplicantsPost);
